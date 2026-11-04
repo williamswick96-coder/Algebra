@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Practice Module - Section 6.5</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax for TeX Rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        #laser-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.4); }
+        }
+        .token-glow {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+
+    <!-- Laser Celebration Canvas -->
+    <canvas id="laser-canvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header class="bg-white/95 border-b border-slate-200 sticky top-0 z-30 backdrop-blur-md shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-xl font-bold text-lg shadow-md shadow-blue-600/20">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">Algebra Practice Module</h1>
+                    <span class="text-xs text-blue-600 font-semibold">Section 6.5 • Applications of Common Logarithms</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <div class="bg-slate-100 border border-slate-300 rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs font-bold text-slate-700">
+                    <i class="fa-solid fa-list-check text-blue-600"></i>
+                    <span>Score: <strong id="score-counter" class="text-blue-600">0</strong> / 18</span>
+                </div>
+                <button onclick="triggerLaserShow()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md shadow-blue-600/20 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt-lightning"></i> Test Laser
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- Student Name & Info Banner -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-3">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">Section 6.5: Applications of Common Logarithms</h2>
+                    <p class="text-xs text-slate-500 font-medium">Reference problem statements and Change-of-Base formulas on pp. 389–390.</p>
+                </div>
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-extrabold border border-blue-200">18 Assigned Problems</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1" for="student-first-name">First Name <span class="text-rose-500">*</span></label>
+                    <input type="text" id="student-first-name" placeholder="Enter first name..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 font-medium focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1" for="student-last-name">Last Name <span class="text-rose-500">*</span></label>
+                    <input type="text" id="student-last-name" placeholder="Enter last name..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 font-medium focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1 Header -->
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 font-bold text-blue-900 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <span>Part I: Solve each exponential equation. Round answers to the nearest hundredth. (#10–26 even)</span>
+        </div>
+
+        <!-- Problem #10 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q1">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 1 (#10 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q1">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(4^x = 17\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q1" placeholder="e.g. 2.05..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q1')" id="btn-q1" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #10
+                </button>
+            </div>
+            <div id="feedback-q1" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #12 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q2">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 2 (#12 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q2">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(7^x = 908\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q2" placeholder="e.g. 3.50..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q2')" id="btn-q2" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #12
+                </button>
+            </div>
+            <div id="feedback-q2" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #14 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q3">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 3 (#14 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q3">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(3.5^x = 28\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q3" placeholder="e.g. 2.67..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q3')" id="btn-q3" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #14
+                </button>
+            </div>
+            <div id="feedback-q3" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #16 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q4">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 4 (#16 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q4">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(25^x = 0.04\)</strong>.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q4" placeholder="e.g. -1..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q4')" id="btn-q4" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #16
+                </button>
+            </div>
+            <div id="feedback-q4" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #18 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q5">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 5 (#18 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q5">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(2^{x-1} = 0.045\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q5" placeholder="e.g. -3.47..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q5')" id="btn-q5" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #18
+                </button>
+            </div>
+            <div id="feedback-q5" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #20 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 6 (#20 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q6">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(3^{1-x} = 0.45\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q6" placeholder="e.g. 1.73..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q6')" id="btn-q6" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #20
+                </button>
+            </div>
+            <div id="feedback-q6" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #22 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q7">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 7 (#22 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q7">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(2^{x+1} = 30\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q7" placeholder="e.g. 3.91..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q7')" id="btn-q7" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #22
+                </button>
+            </div>
+            <div id="feedback-q7" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #24 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q8">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 8 (#24 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q8">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(11 - 6^x = 3\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q8" placeholder="e.g. 1.16..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q8')" id="btn-q8" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #24
+                </button>
+            </div>
+            <div id="feedback-q8" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #26 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q9">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 9 (#26 - Exponential Equation)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q9">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Solve for \(x\): <strong>\(8 + 3^x = 10\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q9" placeholder="e.g. 0.63..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q9')" id="btn-q9" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #26
+                </button>
+            </div>
+            <div id="feedback-q9" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Section 2 Header -->
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 font-bold text-blue-900 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Part II: Evaluate each logarithmic expression to the nearest hundredth using Change-of-Base. (#28–44 even)</span>
+        </div>
+
+        <!-- Problem #28 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q10">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 10 (#28 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q10">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_7 92\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q10" placeholder="e.g. 2.32..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q10')" id="btn-q10" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #28
+                </button>
+            </div>
+            <div id="feedback-q10" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #30 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q11">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 11 (#30 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q11">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_7 18\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q11" placeholder="e.g. 1.49..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q11')" id="btn-q11" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #30
+                </button>
+            </div>
+            <div id="feedback-q11" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #32 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q12">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 12 (#32 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q12">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_7 3\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q12" placeholder="e.g. 0.56..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q12')" id="btn-q12" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #32
+                </button>
+            </div>
+            <div id="feedback-q12" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #34 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q13">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 13 (#34 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q13">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_2 4\)</strong>.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q13" placeholder="e.g. 2..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q13')" id="btn-q13" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #34
+                </button>
+            </div>
+            <div id="feedback-q13" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #36 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q14">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 14 (#36 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q14">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_4 0.37\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q14" placeholder="e.g. -0.72..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q14')" id="btn-q14" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #36
+                </button>
+            </div>
+            <div id="feedback-q14" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #38 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q15">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 15 (#38 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q15">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_2 9\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q15" placeholder="e.g. 3.17..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q15')" id="btn-q15" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #38
+                </button>
+            </div>
+            <div id="feedback-q15" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #40 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q16">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 16 (#40 - Change of Base)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q16">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(\log_9 \frac{1}{4}\)</strong>. Round to the nearest hundredth.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q16" placeholder="e.g. -0.63..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q16')" id="btn-q16" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #40
+                </button>
+            </div>
+            <div id="feedback-q16" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #42 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q17">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 17 (#42 - Evaluate Expression)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q17">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(8 - \log_2 64\)</strong>.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q17" placeholder="e.g. 2..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q17')" id="btn-q17" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #42
+                </button>
+            </div>
+            <div id="feedback-q17" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Problem #44 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all" id="card-q18">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Problem 18 (#44 - Evaluate Expression)</span>
+                <span class="text-xs text-slate-400 font-medium" id="status-q18">Attempts left: 2</span>
+            </div>
+            <p class="text-sm text-slate-800 mb-3">Evaluate: <strong>\(9 + \log_3 27\)</strong>.</p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="text" id="input-q18" placeholder="e.g. 12..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-all">
+                <button onclick="checkQuestion('q18')" id="btn-q18" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Submit #44
+                </button>
+            </div>
+            <div id="feedback-q18" class="mt-3 hidden text-xs font-semibold rounded-xl p-3"></div>
+        </div>
+
+        <!-- Finish Button -->
+        <div class="py-6 flex justify-center">
+            <button onclick="generateCompletionModal()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-2xl text-base shadow-xl shadow-blue-600/30 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-award"></i> Submit Completed Module & View Grade Token
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Modal Pop-Up Grade Token View -->
+    <div id="completion-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-8 border border-slate-200 text-center space-y-5 transform transition-all">
+            
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-blue-100 shadow-sm">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-black text-slate-900">Module Completed!</h3>
+                <p id="modal-student-name" class="text-sm font-semibold text-blue-600">Student: Anonymous</p>
+                <span id="modal-score-badge" class="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold mt-2">
+                    Score: 0 / 18 (0%)
+                </span>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-left space-y-2">
+                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Official Grade Verification Token</label>
+                <div class="flex items-center gap-2 bg-white p-3 rounded-xl border border-slate-300 font-mono text-xs font-bold text-slate-800 break-all select-all">
+                    <span id="token-display">MATH-GRADE::...</span>
+                </div>
+                <button onclick="copyTokenToClipboard()" id="copy-token-btn" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Copy Token to Clipboard
+                </button>
+            </div>
+
+            <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-100 text-left space-y-2 text-xs text-slate-700">
+                <h4 class="font-extrabold text-blue-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-info"></i> Instructions to Submit to Dr. Swick via Jupiter:
+                </h4>
+                <ol class="list-decimal list-inside space-y-1 font-medium text-slate-600">
+                    <li>Click <strong>"Copy Token to Clipboard"</strong> above.</li>
+                    <li>Log into your <strong>JupiterEd</strong> account.</li>
+                    <li>Open your Math class assignment (or send a direct Message to Dr. Swick).</li>
+                    <li>Paste the token string into the comment/message body and click <strong>Turn In / Send</strong>.</li>
+                </ol>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="closeCompletionModal()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">
+                    Close Window
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Script -->
+    <script>
+        const canvas = document.getElementById('laser-canvas');
+        const ctx = canvas.getContext('2d');
+        let animId = null;
+        let moduleStartTime = Date.now();
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let audioCtx = null;
+        function playLaserSound() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(1600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(70, audioCtx.currentTime + 0.12);
+
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
+        }
+
+        function triggerLaserShow() {
+            if (animId) {
+                cancelAnimationFrame(animId);
+                animId = null;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const colors = ['#2563eb', '#3b82f6', '#06b6d4', '#10b981', '#a855f7', '#f43f5e'];
+            let count = 0;
+
+            const interval = setInterval(() => {
+                playLaserSound();
+                if (count > 25) {
+                    clearInterval(interval);
+                    setTimeout(() => ctx.clearRect(0, 0, canvas.width, canvas.height), 500);
+                    return;
+                }
+
+                ctx.save();
+                ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
+                ctx.lineWidth = Math.random() * 8 + 3;
+                ctx.shadowColor = ctx.strokeStyle;
+                ctx.shadowBlur = 25;
+
+                ctx.beginPath();
+                if (Math.random() > 0.5) {
+                    ctx.moveTo(Math.random() * canvas.width, 0);
+                    ctx.lineTo(Math.random() * canvas.width, canvas.height);
+                } else {
+                    ctx.moveTo(0, Math.random() * canvas.height);
+                    ctx.lineTo(canvas.width, Math.random() * canvas.height);
+                }
+                ctx.stroke();
+                ctx.restore();
+
+                count++;
+            }, 90);
+        }
+
+        // State Tracking & Worked Solutions
+        const qState = {
+            q1: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Take common log of both sides: \\(x = \\frac{\\log 17}{\\log 4}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[x = \\frac{\\log 17}{\\log 4} \\approx 2.05\\]" 
+            },
+            q2: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Take common log of both sides: \\(x = \\frac{\\log 908}{\\log 7}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[x = \\frac{\\log 908}{\\log 7} \\approx 3.50\\]" 
+            },
+            q3: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Take common log of both sides: \\(x = \\frac{\\log 28}{\\log 3.5}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[x = \\frac{\\log 28}{\\log 3.5} \\approx 2.67\\]" 
+            },
+            q4: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Note that \\(0.04 = \\frac{1}{25} = 25^{-1}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[25^x = 25^{-1} \\implies x = -1\\]" 
+            },
+            q5: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Take log of both sides: \\(x - 1 = \\frac{\\log 0.045}{\\log 2}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[x = 1 + \\frac{\\log 0.045}{\\log 2} \\approx 1 - 4.47 = -3.47\\]" 
+            },
+            q6: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Take log of both sides: \\(1 - x = \\frac{\\log 0.45}{\\log 3}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[1 - x \\approx -0.73 \\implies x \\approx 1.73\\]" 
+            },
+            q7: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Take log of both sides: \\(x + 1 = \\frac{\\log 30}{\\log 2}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[x = \\frac{\\log 30}{\\log 2} - 1 \\approx 4.91 - 1 = 3.91\\]" 
+            },
+            q8: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Subtract 11 first: \\(-6^x = -8 \\implies 6^x = 8\\).", 
+                worked: "<strong>Solution:</strong><br>\\[6^x = 8 \\implies x = \\frac{\\log 8}{\\log 6} \\approx 1.16\\]" 
+            },
+            q9: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Isolate \\(3^x\\): \\(3^x = 2\\).", 
+                worked: "<strong>Solution:</strong><br>\\[3^x = 2 \\implies x = \\frac{\\log 2}{\\log 3} \\approx 0.63\\]" 
+            },
+            q10: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Apply Change-of-Base: \\(\\frac{\\log 92}{\\log 7}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_7 92 = \\frac{\\log 92}{\\log 7} \\approx 2.32\\]" 
+            },
+            q11: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Apply Change-of-Base: \\(\\frac{\\log 18}{\\log 7}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_7 18 = \\frac{\\log 18}{\\log 7} \\approx 1.49\\]" 
+            },
+            q12: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Apply Change-of-Base: \\(\\frac{\\log 3}{\\log 7}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_7 3 = \\frac{\\log 3}{\\log 7} \\approx 0.56\\]" 
+            },
+            q13: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Since \\(2^2 = 4\\), the log is an exact integer.", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_2 4 = 2\\]" 
+            },
+            q14: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Apply Change-of-Base: \\(\\frac{\\log 0.37}{\\log 4}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_4 0.37 = \\frac{\\log 0.37}{\\log 4} \\approx -0.72\\]" 
+            },
+            q15: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Apply Change-of-Base: \\(\\frac{\\log 9}{\\log 2}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_2 9 = \\frac{\\log 9}{\\log 2} \\approx 3.17\\]" 
+            },
+            q16: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Note that \\(1/4 = 0.25\\). Apply Change-of-Base: \\(\\frac{\\log 0.25}{\\log 9}\\).", 
+                worked: "<strong>Solution:</strong><br>\\[\\log_9 \\frac{1}{4} = \\frac{\\log 0.25}{\\log 9} \\approx -0.63\\]" 
+            },
+            q17: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Evaluate \\(\\log_2 64\\) first. Since \\(2^6 = 64\\), it is \\(6\\).", 
+                worked: "<strong>Solution:</strong><br>\\[8 - \\log_2 64 = 8 - 6 = 2\\]" 
+            },
+            q18: { 
+                attemptsLeft: 2, isCorrect: false, 
+                hint: "Hint: Evaluate \\(\\log_3 27\\) first. Since \\(3^3 = 27\\), it is \\(3\\).", 
+                worked: "<strong>Solution:</strong><br>\\[9 + \\log_3 27 = 9 + 3 = 12\\]" 
+            }
+        };
+
+        let correctCount = 0;
+
+        function updateScore() {
+            correctCount = Object.values(qState).filter(q => q.isCorrect).length;
+            document.getElementById('score-counter').textContent = correctCount;
+        }
+
+        function cleanStr(s) {
+            return s.toLowerCase().replace(/\s+/g, '');
+        }
+
+        function checkQuestion(qId) {
+            const q = qState[qId];
+            if (q.attemptsLeft <= 0 || q.isCorrect) return;
+
+            const feedbackEl = document.getElementById(`feedback-${qId}`);
+            const statusEl = document.getElementById(`status-${qId}`);
+            const btnEl = document.getElementById(`btn-${qId}`);
+            const val = cleanStr(document.getElementById(`input-${qId}`).value);
+
+            q.attemptsLeft--;
+            let isUserCorrect = false;
+
+            // Checking pattern logic
+            switch (qId) {
+                case 'q1': if (val.includes("2.05")) isUserCorrect = true; break;
+                case 'q2': if (val.includes("3.50") || val.includes("3.5")) isUserCorrect = true; break;
+                case 'q3': if (val.includes("2.67")) isUserCorrect = true; break;
+                case 'q4': if (val === "-1" || val.includes("-1")) isUserCorrect = true; break;
+                case 'q5': if (val.includes("-3.47")) isUserCorrect = true; break;
+                case 'q6': if (val.includes("1.73")) isUserCorrect = true; break;
+                case 'q7': if (val.includes("3.91")) isUserCorrect = true; break;
+                case 'q8': if (val.includes("1.16")) isUserCorrect = true; break;
+                case 'q9': if (val.includes("0.63")) isUserCorrect = true; break;
+                case 'q10': if (val.includes("2.32")) isUserCorrect = true; break;
+                case 'q11': if (val.includes("1.49")) isUserCorrect = true; break;
+                case 'q12': if (val.includes("0.56")) isUserCorrect = true; break;
+                case 'q13': if (val === "2" || val.includes("2")) isUserCorrect = true; break;
+                case 'q14': if (val.includes("-0.72")) isUserCorrect = true; break;
+                case 'q15': if (val.includes("3.17")) isUserCorrect = true; break;
+                case 'q16': if (val.includes("-0.63")) isUserCorrect = true; break;
+                case 'q17': if (val === "2" || val.includes("2")) isUserCorrect = true; break;
+                case 'q18': if (val === "12" || val.includes("12")) isUserCorrect = true; break;
+            }
+
+            feedbackEl.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-rose-50', 'text-rose-800', 'border-rose-200');
+
+            if (isUserCorrect) {
+                q.isCorrect = true;
+                feedbackEl.classList.add('bg-emerald-50', 'text-emerald-800', 'border', 'border-emerald-200');
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Correct! Great job.`;
+                statusEl.textContent = "Status: Correct";
+                btnEl.disabled = true;
+                btnEl.className = "px-5 py-2.5 bg-slate-100 text-emerald-700 font-bold text-xs rounded-xl cursor-not-allowed border border-emerald-200";
+                updateScore();
+            } else {
+                if (q.attemptsLeft > 0) {
+                    feedbackEl.classList.add('bg-rose-50', 'text-rose-800', 'border', 'border-rose-200');
+                    feedbackEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-600"></i> Incorrect. You have 1 attempt remaining.<br>${q.hint}`;
+                    statusEl.textContent = "Attempts left: 1";
+                } else {
+                    feedbackEl.classList.add('bg-rose-50', 'text-rose-800', 'border', 'border-rose-200');
+                    feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600"></i> Incorrect (0 attempts left).<br>${q.worked}`;
+                    statusEl.textContent = "Status: Out of attempts";
+                    btnEl.disabled = true;
+                    btnEl.className = "px-5 py-2.5 bg-slate-100 text-slate-400 font-bold text-xs rounded-xl cursor-not-allowed border border-slate-200";
+                    if (window.MathJax) window.MathJax.typesetPromise([feedbackEl]);
+                }
+            }
+        }
+
+        function generateCompletionModal() {
+            const firstName = document.getElementById('student-first-name').value.trim() || "Anonymous";
+            const lastName = document.getElementById('student-last-name').value.trim() || "Student";
+            const fullName = `${firstName} ${lastName}`;
+
+            updateScore();
+            triggerLaserShow();
+
+            const durationSec = Math.round((Date.now() - moduleStartTime) / 1000);
+            
+            let qBreakdown = [];
+            Object.keys(qState).forEach((key, index) => {
+                const q = qState[key];
+                const statusChar = q.isCorrect ? 'S' : 'F';
+                const atts = 2 - q.attemptsLeft;
+                qBreakdown.push(`Q${index+1}:${statusChar}:${atts}:30s`);
+            });
+
+            const payloadStr = `${lastName}, ${firstName}|${correctCount}/18|${durationSec}s|${qBreakdown.join(';')}`;
+            const b64Token = btoa(payloadStr);
+
+            const finalToken = `MATH-GRADE::${b64Token}`;
+
+            document.getElementById('modal-student-name').textContent = `Student: ${fullName}`;
+            document.getElementById('modal-score-badge').textContent = `Score: ${correctCount} / 18 (${Math.round((correctCount/18)*100)}%)`;
+            document.getElementById('token-display').textContent = finalToken;
+
+            document.getElementById('completion-modal').classList.remove('hidden');
+        }
+
+        function copyTokenToClipboard() {
+            const tokenText = document.getElementById('token-display').textContent;
+            navigator.clipboard.writeText(tokenText).then(() => {
+                const btn = document.getElementById('copy-token-btn');
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Token Copied!`;
+                btn.className = "w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2";
+                setTimeout(() => {
+                    btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy Token to Clipboard`;
+                    btn.className = "w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2";
+                }, 2000);
+            });
+        }
+
+        function closeCompletionModal() {
+            document.getElementById('completion-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
